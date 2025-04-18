@@ -1,4 +1,3 @@
-// Library.h
 #ifndef LIBRARY_H
 #define LIBRARY_H
 
@@ -18,14 +17,21 @@ private:
     std::unordered_map<std::string, std::unique_ptr<User>> users;
     std::unordered_map<std::string, Book> booksByISBN;
     std::unordered_map<std::string, IndividualBook*> copiesByBarcode;
-
-    // Additional exact-match maps
     std::unordered_map<std::string, std::string> userNameToId;
     std::unordered_map<std::string, std::vector<std::string>> titleToISBNs;
 
 public:
+    // Prompts
+    void promptAddUser();
+    void promptAddBook();
+    void promptCheckoutBook();
+    void promptReturnBook();
+    void printAllBooks();
+    void printAllUsers();
+    void printStats();
+
     // User management
-    void addUser(std::unique_ptr<User> user);
+    bool addUser(std::unique_ptr<User> user);
     User* getUser(const std::string& userId);
     User* getUserByName(const std::string& name);
 
@@ -37,12 +43,11 @@ public:
 
     // Copy management
     void addCopyToBook(const std::string& isbn, const std::string& barcode);
+    void promptAddCopy();
 
     // Checkout / return
     bool checkoutBook(const std::string& userId, const std::string& barcode, const std::string& dueDate);
-    bool returnBook(const std::string& userId, const std::string& barcode, const std::string& returnDate);
+    bool returnBook(const std::string& barcode, const std::string& returnDate); // userId removed
 };
 
 #endif
-
-

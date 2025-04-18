@@ -48,3 +48,28 @@ bool DateTime::isBefore(const DateTime& other) const {
 bool DateTime::isAfter(const DateTime& other) const {
     return timePoint > other.timePoint;
 }
+
+#include <regex>
+
+bool DateTime::isValidDateTimeFormat(const std::string& dateTime) {
+    // Regex for "YYYY-MM-DD HH:MM:SS"
+    std::regex pattern(R"(^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$)");
+    if (!std::regex_match(dateTime, pattern)) return false;
+
+    // Extract and validate the numbers
+    int year, month, day, hour, minute, second;
+    if (sscanf(dateTime.c_str(), "%4d-%2d-%2d %2d:%2d:%2d",
+               &year, &month, &day, &hour, &minute, &second) != 6) return false;
+
+    // Basic range checks
+    if (month < 1 || month > 12) return false;
+    if (day < 1 || day > 31) return false;
+    if (hour < 0 || hour > 23) return false;
+    if (minute < 0 || minute > 59) return false;
+    if (second < 0 || second > 59) return false;
+
+    // You could add more complex checks (like leap years or month/day combos) if needed
+
+    return true;
+}
+

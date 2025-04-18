@@ -1,40 +1,57 @@
-// main.cpp
+#include "../include/Library.h"
 #include <iostream>
-#include "Library.h"
-#include "AdminUser.h"
-#include "PatronUser.h"
+
+using std::cout;
+using std::cin;
+
+void showMenu() {
+    cout << "\nLibrary System Menu:\n";
+    cout << "1. Add User\n";
+    cout << "2. Add Book (or Add Copy)\n";
+    cout << "3. Add Copy to Existing Book\n";
+    cout << "4. Check Out Book\n";
+    cout << "5. Return Book\n";
+    cout << "6. Exit\n";
+    cout << "Enter your choice: ";
+}
 
 int main() {
-    Library library;
+    Library lib;
+    int choice;
 
-    // === Add Users ===
-    library.addUser(std::make_unique<AdminUser>("admin001", "Alice Admin"));
-    library.addUser(std::make_unique<PatronUser>("user123", "Bob Patron"));
+    while (true) {
+        showMenu();
+        if (!(cin >> choice)) {
+            cin.clear();
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            cout << "Invalid input. Please enter a number.\n";
+            continue;
+        }
 
-    // === Add a Book ===
-    Book book("9780141439518", "Pride and Prejudice", "Jane Austen", "Fiction");
-    library.addBook(book);
-    library.addCopyToBook("9780141439518", "BC001"); // barcode
+        cin.ignore(); // discard newline from input buffer
 
-    // === Checkout ===
-    bool checkoutSuccess = library.checkoutBook("user123", "BC001", "2025-05-01 12:00:00");
-    std::cout << (checkoutSuccess ? "Checkout successful.\n" : "Checkout failed.\n");
-
-    // === Return ===
-    bool returnSuccess = library.returnBook("user123", "BC001", "2025-04-20 10:30:00");
-    std::cout << (returnSuccess ? "Return successful.\n" : "Return failed.\n");
-
-    // === Search Tests ===
-    std::cout << "\n=== Lookup Book by Title ===\n";
-    auto books = library.getBooksByTitle("Pride and Prejudice");
-    for (const auto& b : books) {
-        std::cout << b->getTitle() << " by " << b->getAuthor() << "\n";
-    }
-
-    std::cout << "\n=== Lookup User by Name ===\n";
-    User* user = library.getUserByName("Bob Patron");
-    if (user) {
-        std::cout << "Found user: " << user->getName() << " (" << user->getUserId() << ")\n";
+        switch (choice) {
+            case 1:
+                lib.promptAddUser();
+                break;
+            case 2:
+                lib.promptAddBook();
+                break;
+            case 3:
+                lib.promptAddCopy();
+                break;
+            case 4:
+                lib.promptCheckoutBook();
+                break;
+            case 5:
+                lib.promptReturnBook();
+                break;
+            case 6:
+                cout << "Exiting...\n";
+                return 0;
+            default:
+                cout << "Invalid option. Please try again.\n";
+        }
     }
 
     return 0;

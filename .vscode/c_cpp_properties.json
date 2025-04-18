@@ -3,6 +3,8 @@
     {
       "name": "Mac",
       "includePath": [
+        "${workspaceFolder}/backend/include",
+        "${workspaceFolder}/backend/src",
         "${workspaceFolder}/**"
       ],
       "defines": [],

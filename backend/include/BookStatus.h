@@ -5,7 +5,8 @@ enum class BookStatus {
     Available,
     CheckedOut,
     Lost,
-    Damaged
+    Damaged,
+    Reserved
 };
 
 #endif

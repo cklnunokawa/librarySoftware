@@ -55,3 +55,13 @@ void User::listBorrowHistory() const {
     }
 }
 
+void User::printInfo() {
+    std::cout << "User ID: " << userId << "\n";
+    std::cout << "Name: " << name << "\n";
+    std::cout << "Role: " << getRole() << "\n";
+    std::cout << "Current Checkouts:\n";
+    listCurrentCheckouts();
+    std::cout << "Borrow History:\n";
+    listBorrowHistory();
+}
+

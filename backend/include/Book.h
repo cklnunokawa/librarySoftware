@@ -10,14 +10,17 @@ using std::vector;
 
 class Book {
 private:
-    string isbn;
-    string title;
-    string author;
-    string genre;
-    vector<IndividualBook> copies;
+    string isbn; // ISBN number
+    string title; // Title of the book
+    string author; // Author of the book
+    string genre; // Genre of the book
+    vector<IndividualBook> copies; // Copies of the book
 
 public:
-    Book(const string& isbn, const string& title, const string& author, const string& genre);
+    Book(const string& isbn,
+        const string& title,
+        const string& author,
+        const string& genre);
 
     // Getters
     string getISBN() const;
@@ -25,13 +28,16 @@ public:
     string getAuthor() const;
     string getGenre() const;
     // Add both versions to support read-only and mutable access:
-    const std::vector<IndividualBook>& getCopies() const; // for const contexts
-    std::vector<IndividualBook>& getCopies();             // for modification
+    const vector<IndividualBook>& getCopies() const; // for const contexts
+    vector<IndividualBook>& getCopies();             // for modification
+    int getTotalCopies() const;
 
 
     // Methods
-    void addCopy(const string& barcode);
-    int getAvailableCount() const;
+    void addCopy(const string& barcode); // Adds a new copy to the book
+    int getAvailableCount() const; // Returns the number of available copies
+    void printInfo() const; // Prints book information
+    string Book::statusToString(BookStatus status) const; // Helper function to convert status to string
 };
 
 #endif

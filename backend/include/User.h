@@ -25,11 +25,12 @@ public:
     virtual string getRole() const { return "User"; }
 
     // Getters
-    string getUserId() const;
-    string getName() const;
-    const vector<BookRecord>& getCurrentCheckouts() const;
-    const vector<BookRecord>& getBorrowHistory() const;
-
+    string getUserId() const { return userId; };
+    string getName() const { return name; };
+    const vector<BookRecord>& getCurrentCheckouts() const { return currentCheckouts; };
+    const vector<BookRecord>& getBorrowHistory() const { return borrowHistory; };
+    void printInfo();
+    
     // Setters
     void setUserId(const string& id);
     void setName(const string& name);
