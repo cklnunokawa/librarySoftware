@@ -40,48 +40,57 @@ bool IndividualBook::isAvailable() const {
     return status == BookStatus::Available;
 }
 
-bool IndividualBook::checkOutToUser(const string& userId) {
-    if (status == BookStatus::CheckedOut ||
-        status == BookStatus::Damaged) {
+bool IndividualBook::checkOutToUser(const string& userId, const DateTime& checkoutDate, const DateTime& dueDate) {
+    if (status == BookStatus::CheckedOut || status == BookStatus::Damaged) {
         return false;
     }
 
-    // Even if the book is marked as lost, we allow checkout if it "reappears"
+    if (!checkedOutBy.empty()) {
+        cout << "Error: Book already has a checkedOutBy value." << endl;
+        return false;
+    }
+
     status = BookStatus::CheckedOut;
     checkedOutBy = userId;
+
+    userRecords.emplace_back(userId, checkoutDate, dueDate);
     return true;
 }
 
-bool IndividualBook::returnFromUser() {
-    bool wasCheckedOut = !checkedOutBy.empty();
 
-    if (status == BookStatus::Available && !wasCheckedOut) {
-        // Nothing to return
+bool IndividualBook::returnFromUser(const DateTime& returnDate) {
+    if (checkedOutBy.empty()) {
+        cout << "Error: Book is not currently checked out by any user." << endl;
         return false;
     }
 
-    // Clear user link no matter what
+    if (userRecords.empty()) {
+        cout << "Error: No checkout record found for this book." << endl;
+        return false;
+    }
+
+    UserRecord& lastRecord = userRecords.back();
+
+    if (lastRecord.getUserId() != checkedOutBy) {
+        cout << "Error: Mismatch between last record and current checked out user." << endl;
+        return false;
+    }
+
+    if (lastRecord.isReturned()) {
+        cout << "Warning: Book already marked as returned in latest record." << endl;
+        return false;
+    }
+
+    lastRecord.setReturnDate(returnDate);
     checkedOutBy.clear();
 
-    // If damaged, leave it marked damaged
-    if (status == BookStatus::Damaged) {
-        return true;
-    }
-
-    // If lost, it's now found and available again
-    if (status == BookStatus::Lost) {
+    if (status == BookStatus::Lost || status == BookStatus::CheckedOut) {
         status = BookStatus::Available;
-        return true;
     }
 
-    // If it was checked out, make it available again
-    if (status == BookStatus::CheckedOut) {
-        status = BookStatus::Available;
-        return true;
-    }
-
-    return false; // fallback
+    return true;
 }
+
 
 void IndividualBook::markLost() {
     status = BookStatus::Lost;

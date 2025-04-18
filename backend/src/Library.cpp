@@ -227,21 +227,30 @@ void Library::addCopyToBook(const std::string& isbn, const std::string& barcode)
     }
 }
 
-bool Library::checkoutBook(const std::string& userId, const std::string& barcode, const std::string& dueDate) {
+bool Library::checkoutBook(const std::string& userId, const std::string& barcode, const std::string& dueDateStr) {
     User* user = getUser(userId);
     IndividualBook* copy = getBookByBarcode(barcode);
     if (!user || !copy) return false;
 
-    if (!copy->checkOutToUser(userId)) return false;
+    if (!DateTime::isValidDateTimeFormat(dueDateStr)) {
+        std::cout << "Invalid due date format.\n";
+        return false;
+    }
+
+    DateTime checkoutDate = DateTime::now();
+    DateTime dueDate(dueDateStr);
+
+    if (!copy->checkOutToUser(userId, checkoutDate, dueDate)) return false;
 
     const Book* book = copy->getBook();
-    BookRecord record(barcode, book->getTitle(), DateTime::now().toString(), dueDate);
+    BookRecord record(barcode, book->getTitle(), checkoutDate.toString(), dueDate.toString());
     user->checkoutBook(record);
 
     return true;
 }
 
-bool Library::returnBook(const std::string& barcode, const std::string& returnDate) {
+
+bool Library::returnBook(const std::string& barcode, const std::string& returnDateStr) {
     IndividualBook* copy = getBookByBarcode(barcode);
     if (!copy) return false;
 
@@ -251,8 +260,40 @@ bool Library::returnBook(const std::string& barcode, const std::string& returnDa
     User* user = getUser(userId);
     if (!user) return false;
 
-    if (!copy->returnFromUser()) return false;
+    if (!DateTime::isValidDateTimeFormat(returnDateStr)) {
+        std::cout << "Invalid return date format.\n";
+        return false;
+    }
 
-    user->returnBook(barcode, returnDate);
+    DateTime returnDate(returnDateStr);
+
+    if (!copy->returnFromUser(returnDate)) return false;
+
+    user->returnBook(barcode, returnDate.toString());
     return true;
+}
+
+void Library::printAllUsers() {
+    cout << "All Users:\n";
+    for (const auto& [id, userPtr] : users) {
+        cout << "-------------------------\n";
+        userPtr->printInfo();
+    }
+
+    cout << "-------------------------\n";
+}
+
+void Library::printAllBooks() {
+    cout << "All Books:\n";
+    for (const auto& [isbn, book] : booksByISBN) {
+        cout << "-------------------------/n";
+        book.printInfo();
+    }
+    cout << "-------------------------\n";
+}
+
+void Library::printStats() {
+    cout << "Library Statistics:\n";
+    cout << "Total Users: " << users.size() << "\n";
+    cout << "Total Books: " << booksByISBN.size() << "\n";
 }
