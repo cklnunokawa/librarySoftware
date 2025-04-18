@@ -1,0 +1,13 @@
+CXX = g++
+CXXFLAGS = -std=c++20 -g -Ibackend/include -Ibackend/include/db
+
+SRC := $(wildcard backend/src/**/*.cpp) $(wildcard backend/src/*.cpp)
+OUT = bin/libraryApp
+
+all: $(OUT)
+
+$(OUT): $(SRC)
+	$(CXX) $(CXXFLAGS) -o $(OUT) $(SRC)
+
+clean:
+	rm -f $(OUT)
